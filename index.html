@@ -181,6 +181,7 @@
                 <img src="" alt="Album cover">
             </div>
             <div class="info">
+        
                 <div class="device">iPhone</div>
                 <div class="song-title">My play list</div>
                 <div class="artist">Ignacio Waak</div>
@@ -237,69 +238,75 @@
         </div>
     </div>
 <script>
-  // Lista de canciones
-  const songs = [
-    {
-      title: "Luxxx",
-      artist: "Lit killa ft Tiago PZK",
-      image: "fotos/1.jpg",
-      audio: "can/1.m4a",
-      type: "image"
-    },
-    {
-      title: "QUE VAS A HACER HOY",
-      artist: "Omar Courtz ft De la Ghetto",
-      image: "fotos/2.jpg",
-      audio: "can/2.m4a",
-      type: "image"
-    },
-    {
-      title: "Duele",
-      artist: "YSY A",
-      image: "fotos/3.jpg",
-      audio: "can/3.m4a",
-      type: "image"
-    },
-    {
-      title: "Luna",
-      artist: "Feid",
-      image: "place/4.jpg",
-      audio: "can/4.m4a",
-      video: "fotos/4.mp4",
-      type: "video"
-    },
-    {
-      title: "Cine",
-      artist: "Duki",
-      image: "fotos/1.jpg",
-      video: "fotos/5.mp4",
-      audio: "can/5.m4a",
-      type: "video"
-    },
-    {
-      title: "El Don",
-      artist: "Khea, Lit killa, Asan, bhavi",
-      image: "place/6.jpg",
-      audio: "can/6.m4a",
-      video: "fotos/6.mp4",
-      type: "video"
-    }
-  ];
+// Lista de canciones
+const songs = [
+  {
+    title: "Luxxx",
+    artist: "Lit killa ft Tiago PZK",
+    image: "place/1.jpg",
+    audio: "can/1.m4a",
+    video: "fotos/1.mp4",
+    type: "video"
+  },
+  {
+    title: "QUE VAS A HACER HOY",
+    artist: "Omar Courtz ft De la Ghetto",
+    image: "fotos/2.jpg",
+    audio: "can/2.m4a",
+    type: "image"
+  },
+  {
+    title: "Duele",
+    artist: "YSY A",
+    image: "fotos/3.jpg",
+    audio: "can/3.m4a",
+    type: "image"
+  },
+  {
+    title: "Luna",
+    artist: "Feid",
+    image: "place/4.jpg",
+    audio: "can/4.m4a",
+    video: "fotos/4.mp4",
+    type: "video"
+  },
+  {
+    title: "Cine",
+    artist: "Duki",
+    image: "fotos/1.jpg",
+    video: "fotos/5.mp4",
+    audio: "can/5.m4a",
+    type: "video"
+  },
+  {
+    title: "El Don",
+    artist: "Khea, Lit killa, Asan, bhavi",
+    image: "place/6.jpg",
+    audio: "can/6.m4a",
+    video: "fotos/6.mp4",
+    type: "video"
+  }
+];
 
-  let currentSongIndex = 0;
-  const audio = new Audio();
+let currentSongIndex = 0;
+const audio = new Audio();
+let isWelcomeScreen = true; // Variable para controlar si estamos en la pantalla de bienvenida
 
-  const updatePlayer = () => {
-    const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
+const updatePlayer = () => {
+  // Si estamos en la pantalla de bienvenida, mostramos solo el mensaje inicial
+  if (isWelcomeScreen) {
+    // Mostrar mensaje de bienvenida
+    document.querySelector('.song-title').textContent = "Mi Playlist";
+    document.querySelector('.artist').textContent = "Ignacio Wack";
 
-    document.querySelector('.song-title').textContent = title;
-    document.querySelector('.artist').textContent = artist;
+    // Mostrar la frase del dispositivo (iPhone o lo que sea)
+    document.querySelector('.device').textContent = "iPhone"; // O el nombre que quieras para el dispositivo
 
     const albumArtContainer = document.querySelector('.album-art');
-    albumArtContainer.innerHTML = ''; // Limpia el contenido actual
+    albumArtContainer.innerHTML = ''; // Limpiar el contenedor
 
     const imgElement = document.createElement('img');
-    imgElement.src = image;
+    imgElement.src = "fotos/1.jpg"; // Imagen de bienvenida
     imgElement.style.width = '100%';
     imgElement.style.height = '100%';
     imgElement.style.objectFit = 'cover';
@@ -307,109 +314,132 @@
     imgElement.style.transition = 'opacity 2s ease';
     albumArtContainer.appendChild(imgElement);
 
-    if (type === "video") {
+    // Aseguramos que el texto "iPhone" sea visible y no altere el tamaño
+    document.querySelector('.device').style.display = 'block'; // Asegura que "iPhone" sea visible
+
+    return; // Detenemos la ejecución aquí si es la pantalla de bienvenida
+  }
+
+  // Si no estamos en la pantalla de bienvenida, actualizamos el reproductor
+  const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
+
+  document.querySelector('.song-title').textContent = title;
+  document.querySelector('.artist').textContent = artist;
+
+  const albumArtContainer = document.querySelector('.album-art');
+  albumArtContainer.innerHTML = ''; // Limpiar el contenedor de la carátula
+
+  const imgElement = document.createElement('img');
+  imgElement.src = image;
+  imgElement.style.width = '100%';
+  imgElement.style.height = '100%';
+  imgElement.style.objectFit = 'cover';
+  albumArtContainer.appendChild(imgElement);
+
+  if (type === "video") {
+    setTimeout(() => {
+      const videoElement = document.createElement('video');
+      videoElement.src = video;
+      videoElement.autoplay = true;
+      videoElement.loop = true;
+      videoElement.muted = true;
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
+      videoElement.style.objectFit = 'cover';
+      albumArtContainer.appendChild(videoElement);
+
+      videoElement.addEventListener('canplaythrough', () => {
+        imgElement.style.opacity = '0.6';
+        videoElement.style.opacity = '1';
+      });
+
       setTimeout(() => {
-        const videoElement = document.createElement('video');
-        videoElement.src = video; // Se asegura de cargar el video correcto
-        videoElement.autoplay = true;
-        videoElement.loop = true;
-        videoElement.muted = true;
-        videoElement.style.width = '100%';
-        videoElement.style.height = '100%';
-        videoElement.style.objectFit = 'cover';
-        videoElement.style.opacity = '0';
-        videoElement.style.transition = 'opacity 2s ease';
+        imgElement.remove();
+      }, 500);
+    }, 4000);
+  }
 
-        albumArtContainer.appendChild(videoElement);
-
-        videoElement.addEventListener('canplaythrough', () => {
-          imgElement.style.opacity = '0.6';
-          videoElement.style.opacity = '1';
-        });
-
-        setTimeout(() => {
-          imgElement.remove();
-        }, 500); // Asegura que la transición esté completa
-      }, 4000); // Espera 5 segundos antes de cambiar
-    }
-
-    audio.src = audioSrc;
-    audio.preload = "auto";
-    audio.play().catch(error => {
-      console.log("Error al reproducir automáticamente:", error);
-    });
-    updatePlayPauseButton(true);
-  };
-
-  // Control de volumen
-  document.querySelector('.volume-control').addEventListener('input', (e) => {
-    const volume = e.target.value / 100; // Escala de 0 a 1
-    audio.volume = volume;
+  audio.src = audioSrc;
+  audio.preload = "auto";
+  audio.play().catch(error => {
+    console.log("Error al reproducir automáticamente:", error);
   });
+  updatePlayPauseButton(true);
+};
 
-  audio.addEventListener('ended', () => {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-    updatePlayer();
+// Control de volumen
+document.querySelector('.volume-control').addEventListener('input', (e) => {
+  const volume = e.target.value / 100; // Escala de 0 a 1
+  audio.volume = volume;
+});
+
+audio.addEventListener('ended', () => {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  updatePlayer();
+  audio.play();
+});
+
+const updatePlayPauseButton = (isPlaying) => {
+  const playPauseBtn = document.querySelector('.play-pause svg');
+  if (isPlaying) {
+    playPauseBtn.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+  } else {
+    playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
+  }
+};
+
+document.querySelector('.play-pause').addEventListener('click', () => {
+  if (audio.paused) {
     audio.play();
-  });
+    updatePlayPauseButton(true);
+    isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
+    updatePlayer(); // Actualiza el reproductor
+  } else {
+    audio.pause();
+    updatePlayPauseButton(false);
+  }
+});
 
-  const updatePlayPauseButton = (isPlaying) => {
-    const playPauseBtn = document.querySelector('.play-pause svg');
-    if (isPlaying) {
-      playPauseBtn.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-    } else {
-      playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
-    }
-  };
+document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
+  updatePlayer();
+});
 
-  document.querySelector('.play-pause').addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play();
-      updatePlayPauseButton(true);
-    } else {
-      audio.pause();
-      updatePlayPauseButton(false);
-    }
-  });
+document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
+  updatePlayer();
+});
 
-  document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-    updatePlayer();
-  });
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60) || 0;
+  const secs = Math.floor(seconds % 60) || 0;
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
 
-  document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
-    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-    updatePlayer();
-  });
+audio.addEventListener('timeupdate', () => {
+  const progressBar = document.querySelector('.progress');
+  const currentTime = document.querySelector('.time span:first-child');
+  const durationTime = document.querySelector('.time span:last-child');
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60) || 0;
-    const secs = Math.floor(seconds % 60) || 0;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
+  const progressPercentage = (audio.currentTime / audio.duration) * 100 || 0;
+  progressBar.style.width = `${progressPercentage}%`;
 
-  audio.addEventListener('timeupdate', () => {
-    const progressBar = document.querySelector('.progress');
-    const currentTime = document.querySelector('.time span:first-child');
-    const durationTime = document.querySelector('.time span:last-child');
+  currentTime.textContent = formatTime(audio.currentTime);
+  durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
+});
 
-    const progressPercentage = (audio.currentTime / audio.duration) * 100 || 0;
-    progressBar.style.width = `${progressPercentage}%`;
+const progressBar = document.querySelector('.progress-bar');
+progressBar.addEventListener('click', (e) => {
+  const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
+  const clickPercentage = Math.min(Math.max(clickPosition / progressBar.offsetWidth, 0), 1);
+  audio.currentTime = clickPercentage * audio.duration;
+});
 
-    currentTime.textContent = formatTime(audio.currentTime);
-    durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
-  });
-
-  const progressBar = document.querySelector('.progress-bar');
-  progressBar.addEventListener('click', (e) => {
-    const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
-    const clickPercentage = Math.min(Math.max(clickPosition / progressBar.offsetWidth, 0), 1);
-    audio.currentTime = clickPercentage * audio.duration;
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    updatePlayer();
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlayer(); // Inicializa la pantalla de bienvenida
+});
 </script>
 </body>
 </html>
