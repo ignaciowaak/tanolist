@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My play list </title>
+    <title>iOS Music Player</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.5s ease;
         }
         .container {
             display: flex;
@@ -17,13 +18,15 @@
             align-items: center;
             height: 100%;
             background: linear-gradient(to bottom, #2a3b4b, #1a2634);
+            transition: background 0.5s ease;
         }
         .player {
             width: 320px;
-            background: linear-gradient(to bottom, #2a3b4b, #1a2634);
+            background: linear-gradient(to bottom, #2a3b4b, #1a263);
             border-radius: 2rem;
             padding: 1rem;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.5s ease-in-out;
         }
         .album-art {
             width: 100%;
@@ -31,31 +34,35 @@
             border-radius: 1rem;
             overflow: hidden;
             margin-bottom: 1rem;
-            transition: all 0.5s ease-in-out;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .album-art img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: all 0.5s ease-in-out;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .info {
             color: #fff;
             margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
         .device {
             font-size: 0.875rem;
             color: #8e9eab;
             margin-bottom: 0.25rem;
+            transition: color 0.3s ease;
         }
         .song-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
+            transition: all 0.3s ease;
         }
         .artist {
             font-size: 1rem;
             color: #8e9eab;
+            transition: color 0.3s ease;
         }
         .progress-bar {
             height: 4px;
@@ -63,13 +70,14 @@
             border-radius: 2px;
             margin-bottom: 0.5rem;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         .progress {
             width: 0%;
             height: 100%;
             background: #fff;
             border-radius: 2px;
-            transition: width 0.1s linear;
+            transition: width 0.1s linear, background-color 0.3s ease;
         }
         .time {
             display: flex;
@@ -77,17 +85,20 @@
             color: #8e9eab;
             font-size: 0.875rem;
             margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
         }
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
         .main-controls {
             display: flex;
             align-items: center;
             gap: 2rem;
+            transition: gap 0.3s ease;
         }
         .control-btn {
             background: none;
@@ -95,11 +106,19 @@
             color: #fff;
             cursor: pointer;
             padding: 0;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        .control-btn:active {
+            transform: scale(0.9);
         }
         .volume-control {
             display: flex;
             align-items: center;
             gap: 1rem;
+            transition: all 0.3s ease;
         }
         .volume-slider {
             flex-grow: 1;
@@ -108,6 +127,7 @@
             background: rgba(255,255,255,0.2);
             outline: none;
             border-radius: 2px;
+            transition: all 0.3s ease;
         }
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -117,6 +137,7 @@
             background: #ffffff;
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         .volume-slider::-moz-range-thumb {
             width: 12px;
@@ -125,6 +146,7 @@
             border-radius: 50%;
             cursor: pointer;
             border: none;
+            transition: all 0.3s ease;
         }
         .toast {
             position: fixed;
@@ -137,6 +159,15 @@
             border-radius: 5px;
             display: none;
             z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .play-pause:hover {
+            animation: pulse 1s infinite;
         }
     </style>
 </head>
@@ -145,12 +176,12 @@
     <div class="container">
         <div class="player">
             <div class="album-art">
-                <img src="fotos/1.jpg" alt="Album cover">
+                <img src="" alt="Album cover">
             </div>
             <div class="info">
                 <div class="device">iPhone</div>
-                <div class="song-title">Luxxx</div>
-                <div class="artist">Lit killa ft Tiago pzk</div>
+                <div class="song-title"></div>
+                <div class="artist"></div>
             </div>
             <div class="progress-bar">
                 <div class="progress"></div>
@@ -227,8 +258,12 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.style.display = 'block';
+            toast.style.opacity = '1';
             setTimeout(() => {
-                toast.style.display = 'none';
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
             }, duration);
         };
 
@@ -326,6 +361,25 @@
             const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
             const clickPercentage = (clickPosition / progressBar.offsetWidth);
             audio.currentTime = clickPercentage * audio.duration;
+        });
+
+        // Add hover effects
+        const buttons = document.querySelectorAll('.control-btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.transform = 'scale(1.1)';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add color change on hover for progress bar
+        progressBar.addEventListener('mouseenter', () => {
+            document.querySelector('.progress').style.backgroundColor = '#E7DBCB';
+        });
+        progressBar.addEventListener('mouseleave', () => {
+            document.querySelector('.progress').style.backgroundColor = '#fff';
         });
     </script>
 </body>
