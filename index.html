@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS Music Player</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: linear-gradient(to bottom, #2a3b4b, #1a2634);
+        }
+        .player {
+            width: 320px;
+            background: linear-gradient(to bottom, #2a3b4b, #1a2634);
+            border-radius: 2rem;
+            padding: 1rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .album-art {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .info {
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+        .device {
+            font-size: 0.875rem;
+            color: #8e9eab;
+            margin-bottom: 0.25rem;
+        }
+        .song-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .artist {
+            font-size: 1rem;
+            color: #8e9eab;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .progress {
+            width: 55%;
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+        }
+        .time {
+            display: flex;
+            justify-content: space-between;
+            color: #8e9eab;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .main-controls {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 0;
+        }
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .volume-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            border-radius: 2px;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast"></div>
+    <div class="container">
+        <div class="player">
+            <div class="album-art">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Flowers%20by%20Miley%20Cyrus.jpg-2P7nIRay103GfxmXgbfXrDAkGjOmA7.jpeg" alt="Album cover for Flowers by Miley Cyrus">
+            </div>
+            <div class="info">
+                <div class="device">iPhone</div>
+                <div class="song-title">Flowers</div>
+                <div class="artist">Miley Cyrus</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="time">
+                <span>1:48</span>
+                <span>-1:33</span>
+            </div>
+            <div class="controls">
+                <button class="control-btn" aria-label="Add to favorites">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </button>
+                <div class="main-controls">
+                    <button class="control-btn" aria-label="Previous track">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.5 3L4.5 12L12.5 21V3Z"></path>
+                            <path d="M20.5 3L12.5 12L20.5 21V3Z"></path>
+                        </svg>
+                    </button>
+                    <button class="control-btn play-pause" aria-label="Play or pause">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                    </button>
+                    <button class="control-btn" aria-label="Next track">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.5 3L19.5 12L11.5 21V3Z"></path>
+                            <path d="M3.5 3L11.5 12L3.5 21V3Z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <button class="control-btn" aria-label="AirPlay">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path>
+                        <polygon points="12 15 17 21 7 21 12 15"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="volume-control">
+                <button class="control-btn" aria-label="Volume">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
+                </button>
+                <input type="range" min="0" max="100" value="50" class="volume-slider" aria-label="Volume control">
+            </div>
+        </div>
+    </div>
+    <script>
+        // Lista de canciones
+        const songs = [
+            {
+                title: "Luxxx",
+                artist: "Lit killa ft Tiago pzk",
+                image: "fotos/1.jpg",
+                audio: "can/1.m4a"
+            },
+            {
+                title: "QUE VAS A HACER HOY",
+                artist: "Omar Courtz ft De la rosse",
+                image: "fotos/2.jpg",
+                audio: "can/2.m4a"
+            }
+        ];
+
+        let currentSongIndex = 0;
+        const audio = new Audio();
+        
+        const showToast = (message, duration = 3000) => {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
+        };
+
+        const updatePlayer = () => {
+            const { title, artist, image, audio: audioSrc } = songs[currentSongIndex];
+
+            document.querySelector('.song-title').textContent = title;
+            document.querySelector('.artist').textContent = artist;
+            document.querySelector('.album-art img').src = image;
+
+            audio.src = audioSrc;
+            audio.play().catch(error => {
+                console.log("Error al reproducir automáticamente:", error);
+            });
+            updatePlayPauseButton(true);
+        };
+
+        audio.addEventListener('ended', () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            updatePlayer();
+        });
+
+        const updatePlayPauseButton = (isPlaying) => {
+            const playPauseBtn = document.querySelector('.play-pause svg');
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+            } else {
+                playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
+            }
+        };
+
+        document.querySelector('.control-btn[aria-label="Add to favorites"]').addEventListener('click', () => {
+            showToast('¡Agregado a favoritos!');
+        });
+
+        document.querySelector('.control-btn[aria-label="AirPlay"]').addEventListener('click', () => {
+            const pageUrl = window.location.href; // Reemplazar con tu URL real
+            navigator.clipboard.writeText(pageUrl).then(() => {
+                showToast('¡Enlace copiado! Gracias por compartir la página');
+            });
+        });
+
+        document.querySelector('.play-pause').addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                updatePlayPauseButton(true);
+            } else {
+                audio.pause();
+                updatePlayPauseButton(false);
+            }
+        });
+
+        document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            updatePlayer();
+        });
+
+        document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            updatePlayer();
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const progressBar = document.querySelector('.progress');
+            const currentTime = document.querySelector('.time span:first-child');
+            const durationTime = document.querySelector('.time span:last-child');
+
+            const progressPercentage = (audio.currentTime / audio.duration) * 100 || 0;
+            progressBar.style.width = `${progressPercentage}%`;
+
+            currentTime.textContent = formatTime(audio.currentTime);
+            durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
+        });
+
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60) || 0;
+            const secs = Math.floor(seconds % 60) || 0;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        };
+
+        const volumeSlider = document.querySelector('.volume-slider');
+        volumeSlider.addEventListener('input', (e) => {
+            const value = e.target.value / 100;
+            audio.volume = value;
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePlayer();
+            audio.volume = volumeSlider.value / 100;
+        });
+    </script>
+</body>
+</html>
