@@ -263,9 +263,10 @@
     {
       title: "Luna",
       artist: "Feid",
-      image: "fotos/4.jpg",
+      image: "place/4.jpg",
       audio: "can/4.m4a",
-      type: "image"
+      video: "fotos/4.mp4",
+      type: "video"
     },
     {
       title: "Cine",
@@ -276,11 +277,11 @@
       type: "video"
     },
     {
-      title: "El Don ",
-      artist: "Khea, Bhavi, LIT killah y Asan)",
+      title: "El Don",
+      artist: "Khea, Lit killa, Asan, bhavi",
       image: "place/6.jpg",
-      video: "fotos/6.mp4",
       audio: "can/6.m4a",
+      video: "fotos/6.mp4",
       type: "video"
     }
   ];
@@ -309,7 +310,7 @@
     if (type === "video") {
       setTimeout(() => {
         const videoElement = document.createElement('video');
-        videoElement.src = video;
+        videoElement.src = video; // Se asegura de cargar el video correcto
         videoElement.autoplay = true;
         videoElement.loop = true;
         videoElement.muted = true;
@@ -339,6 +340,12 @@
     });
     updatePlayPauseButton(true);
   };
+
+  // Control de volumen
+  document.querySelector('.volume-control').addEventListener('input', (e) => {
+    const volume = e.target.value / 100; // Escala de 0 a 1
+    audio.volume = volume;
+  });
 
   audio.addEventListener('ended', () => {
     currentSongIndex = (currentSongIndex + 1) % songs.length;
