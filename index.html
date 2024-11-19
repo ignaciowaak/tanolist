@@ -178,7 +178,7 @@
     <div class="container">
         <div class="player">
             <div class="album-art">
-                <img src="" alt="Album cover">
+                <img src="welcome/0.png" alt="Album cover">
             </div>
             <div class="info">
             
@@ -293,32 +293,35 @@ const audio = new Audio();
 let isWelcomeScreen = true; // Variable para controlar si estamos en la pantalla de bienvenida
 
 const updatePlayer = () => {
-  // Si estamos en la pantalla de bienvenida, mostramos solo el mensaje inicial
-  if (isWelcomeScreen) {
-    // Mostrar mensaje de bienvenida
-    document.querySelector('.song-title').textContent = "Mi Playlist";
-    document.querySelector('.artist').textContent = "Ignacio Wack";
+    // Si estamos en la pantalla de bienvenida, mostramos solo el mensaje inicial
+    if (isWelcomeScreen) {
+      // Mostrar mensaje de bienvenida
+      document.querySelector('.album-art').textContent = "welcome/0.png";
 
-    // Mostrar la frase del dispositivo (iPhone o lo que sea)
-    document.querySelector('.device').textContent = "iPhone"; // O el nombre que quieras para el dispositivo
 
-    const albumArtContainer = document.querySelector('.album-art');
-    albumArtContainer.innerHTML = ''; // Limpiar el contenedor
+      document.querySelector('.song-title').textContent = "Mi Playlist";
+      document.querySelector('.artist').textContent = "Ignacio Wack";
 
-    const imgElement = document.createElement('img');
-    imgElement.src = "fotos/1.jpg"; // Imagen de bienvenida
-    imgElement.style.width = '100%';
-    imgElement.style.height = '100%';
-    imgElement.style.objectFit = 'cover';
-    imgElement.style.opacity = '1';
-    imgElement.style.transition = 'opacity 2s ease';
-    albumArtContainer.appendChild(imgElement);
+      // Mostrar la frase del dispositivo (iPhone o lo que sea)
+      document.querySelector('.device').textContent = "iPhone"; // O el nombre que quieras para el dispositivo
 
-    // Aseguramos que el texto "iPhone" sea visible y no altere el tamaño
-    document.querySelector('.device').style.display = 'block'; // Asegura que "iPhone" sea visible
+      const albumArtContainer = document.querySelector('.album-art');
+      albumArtContainer.innerHTML = ''; // Limpiar el contenedor
 
-    return; // Detenemos la ejecución aquí si es la pantalla de bienvenida
-  }
+      const imgElement = document.createElement('img');
+      imgElement.src = "welcome/0.png"; // Imagen de bienvenida
+      imgElement.style.width = '100%';
+      imgElement.style.height = '100%';
+      imgElement.style.objectFit = 'cover';
+      imgElement.style.opacity = '1';
+      imgElement.style.transition = 'opacity 2s ease';
+      albumArtContainer.appendChild(imgElement);
+
+      // Aseguramos que el texto "iPhone" sea visible y no altere el tamaño
+      document.querySelector('.device').style.display = 'block'; // Asegura que "iPhone" sea visible
+
+      return; // Detenemos la ejecución aquí si es la pantalla de bienvenida
+    }
 
   // Si no estamos en la pantalla de bienvenida, actualizamos el reproductor
   const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
