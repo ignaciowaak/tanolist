@@ -21,7 +21,7 @@
             transition: background 0.5s ease;
         }
         .player {
-            width: 320px;
+            width: 330px;
             background: linear-gradient(to bottom, #2a3b4b, #1a263);
             border-radius: 2rem;
             padding: 1rem;
@@ -34,13 +34,13 @@
             border-radius: 1rem;
             overflow: hidden;a
             margin-bottom: 1rem;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .album-art img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .info {
             color: #fff;
@@ -48,13 +48,15 @@
             transition: all 0.3s ease;
         }
         .device {
+            
             font-size: 0.875rem;
             color: #8e9eab;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.40rem;
+            margin-top: 1.40rem;
             transition: color 0.3s ease;
         }
         .song-title {
-            font-size: 1.25rem;
+            font-size: 1.40rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
             transition: all 0.3s ease;
@@ -234,170 +236,210 @@
             </div>
         </div>
     </div>
-    <script>
-        // Lista de canciones
-        const songs = [
-  {
-    title: "Luxxx",
-    artist: "Lit killa ft Tiago PZK",
-    image: "fotos/1.jpg",
-    audio: "can/1.m4a"
+<script>
+  // Lista de canciones
+  const songs = [
+    {
+      title: "Luxxx",
+      artist: "Lit killa ft Tiago PZK",
+      image: "fotos/1.jpg",
+      audio: "can/1.m4a",
+      type: "image"
     },
-  {
-    title: "QUE VAS A HACER HOY",
-    artist: "Omar Courtz ft De la Ghetto",
-    image: "fotos/2.jpg",
-    audio: "can/2.m4a"
+    {
+      title: "QUE VAS A HACER HOY",
+      artist: "Omar Courtz ft De la Ghetto",
+      image: "fotos/2.jpg",
+      audio: "can/2.m4a",
+      type: "image"
     },
-  {
-    title: "Duele",
-    artist: "YSY A",
-    image: "fotos/3.jpg",
-    audio: "can/3.m4a"
+    {
+      title: "Duele",
+      artist: "YSY A",
+      image: "fotos/3.jpg",
+      audio: "can/3.m4a",
+      type: "image"
     },
-  {
-    title: "Luna",
-    artist: "Feid",
-    image: "fotos/4.jpg",
-    audio: "can/4.m4a"
+    {
+      title: "Luna",
+      artist: "Feid",
+      image: "fotos/4.jpg",
+      audio: "can/4.m4a",
+      type: "image"
     },
-  {
-    title: "Cine",
-    artist: "Duki",
-    image: "fotos/5.jpg",
-    audio: "can/5.m4a"
+    {
+      title: "Cine",
+      artist: "Duki",
+      image: "fotos/1.jpg",
+      video: "fotos/5.mp4",
+      audio: "can/5.m4a",
+      type: "video"
+    },
+    {
+      title: "El Don ",
+      artist: "Khea, Bhavi, LIT killah y Asan)",
+      image: "place/6.jpg",
+      video: "fotos/6.mp4",
+      audio: "can/6.m4a",
+      type: "video"
     }
-];
-        let currentSongIndex = 0;
-        const audio = new Audio();
-        
-        const showToast = (message, duration = 3000) => {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            toast.style.opacity = '1';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 300);
-            }, duration);
-        };
+  ];
 
-        const updatePlayer = () => {
-            const { title, artist, image, audio: audioSrc } = songs[currentSongIndex];
+  let currentSongIndex = 0;
+  const audio = new Audio();
 
-            document.querySelector('.song-title').textContent = title;
-            document.querySelector('.artist').textContent = artist;
-            document.querySelector('.album-art img').src = image;
+  const showToast = (message, duration = 3000) => {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.display = 'block';
+    toast.style.opacity = '1';
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 300);
+    }, duration);
+  };
 
-            audio.src = audioSrc;
-            audio.play().catch(error => {
-                console.log("Error al reproducir automáticamente:", error);
-            });
-            updatePlayPauseButton(true);
-        };
+  const updatePlayer = () => {
+    const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
 
-        audio.addEventListener('ended', () => {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
-            updatePlayer();
-        });
+    document.querySelector('.song-title').textContent = title;
+    document.querySelector('.artist').textContent = artist;
 
-        const updatePlayPauseButton = (isPlaying) => {
-            const playPauseBtn = document.querySelector('.play-pause svg');
-            if (isPlaying) {
-                playPauseBtn.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-            } else {
-                playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
-            }
-        };
+    const albumArtContainer = document.querySelector('.album-art');
+    albumArtContainer.innerHTML = ''; // Limpia el contenido actual
 
-        document.querySelector('.control-btn[aria-label="Add to favorites"]').addEventListener('click', () => {
-            showToast('¡Agregado a favoritos!');
-        });
+    if (type === "image") {
+      const imgElement = document.createElement('img');
+      imgElement.src = image;
+      imgElement.style.width = '100%';
+      imgElement.style.height = '100%';
+      imgElement.style.objectFit = 'cover';
+      albumArtContainer.appendChild(imgElement);
 
-        document.querySelector('.control-btn[aria-label="AirPlay"]').addEventListener('click', () => {
-            const pageUrl = window.location.href;
-            navigator.clipboard.writeText(pageUrl).then(() => {
-                showToast('¡Enlace copiado! Gracias por compartir la página');
-            });
-        });
+      // Mostrar imagen por 5 segundos, luego transicionar al video si existe
+      if (video) {
+        setTimeout(() => {
+          const videoElement = document.createElement('video');
+          videoElement.src = video;
+          videoElement.autoplay = true;
+          videoElement.loop = true;
+          videoElement.muted = true;
+          videoElement.style.width = '100%';
+          videoElement.style.height = '100%';
+          videoElement.style.objectFit = 'cover';
+          videoElement.style.opacity = '0'; // Inicia oculto para transicionar
+          videoElement.style.transition = 'opacity 2s ease';
 
-        document.querySelector('.play-pause').addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-                updatePlayPauseButton(true);
-            } else {
-                audio.pause();
-                updatePlayPauseButton(false);
-            }
-        });
+          albumArtContainer.appendChild(videoElement);
 
-        document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
-            updatePlayer();
-        });
+          // Asegurar transición suave una vez cargado el video
+          videoElement.addEventListener('canplaythrough', () => {
+            videoElement.style.opacity = '1';
+          });
+        }, 5000); // 5 segundos de imagen antes de transicionar
+      }
+    } else if (type === "video") {
+      const videoElement = document.createElement('video');
+      videoElement.src = video;
+      videoElement.autoplay = true;
+      videoElement.loop = true;
+      videoElement.muted = true;
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
+      videoElement.style.objectFit = 'cover';
+      albumArtContainer.appendChild(videoElement);
+    }
 
-        document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-            updatePlayer();
-        });
+    // Precarga del audio sin cambiar automáticamente
+    audio.src = audioSrc;
+    audio.preload = "auto";
+    audio.play().catch(error => {
+      console.log("Error al reproducir automáticamente:", error);
+    });
+    updatePlayPauseButton(true);
+  };
 
-        audio.addEventListener('timeupdate', () => {
-            const progressBar = document.querySelector('.progress');
-            const currentTime = document.querySelector('.time span:first-child');
-            const durationTime = document.querySelector('.time span:last-child');
+  audio.addEventListener('ended', () => {
+    updatePlayPauseButton(false);
+  });
 
-            const progressPercentage = (audio.currentTime / audio.duration) * 100 || 0;
-            progressBar.style.width = `${progressPercentage}%`;
+  const updatePlayPauseButton = (isPlaying) => {
+    const playPauseBtn = document.querySelector('.play-pause svg');
+    if (isPlaying) {
+      playPauseBtn.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+    } else {
+      playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
+    }
+  };
 
-            currentTime.textContent = formatTime(audio.currentTime);
-            durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
-        });
+  document.querySelector('.control-btn[aria-label="Add to favorites"]').addEventListener('click', () => {
+    showToast('¡Agregado a favoritos!');
+  });
 
-        const formatTime = (seconds) => {
-            const mins = Math.floor(seconds / 60) || 0;
-            const secs = Math.floor(seconds % 60) || 0;
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        };
+  document.querySelector('.control-btn[aria-label="AirPlay"]').addEventListener('click', () => {
+    const pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(() => {
+      showToast('¡Enlace copiado! Gracias por compartir la página');
+    });
+  });
 
-        const volumeSlider = document.querySelector('.volume-slider');
-        volumeSlider.addEventListener('input', (e) => {
-            const value = e.target.value / 100;
-            audio.volume = value;
-        });
+  document.querySelector('.play-pause').addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      updatePlayPauseButton(true);
+    } else {
+      audio.pause();
+      updatePlayPauseButton(false);
+    }
+  });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updatePlayer();
-            audio.volume = volumeSlider.value / 100;
-        });
+  document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    updatePlayer();
+  });
 
-        // New code to allow user interaction with the time bar
-        const progressBar = document.querySelector('.progress-bar');
-        progressBar.addEventListener('click', (e) => {
-            const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
-            const clickPercentage = (clickPosition / progressBar.offsetWidth);
-            audio.currentTime = clickPercentage * audio.duration;
-        });
+  document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    updatePlayer();
+  });
 
-        // Add hover effects
-        const buttons = document.querySelectorAll('.control-btn');
-        buttons.forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                button.style.transform = 'scale(1.1)';
-            });
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = 'scale(1)';
-            });
-        });
+  audio.addEventListener('timeupdate', () => {
+    const progressBar = document.querySelector('.progress');
+    const currentTime = document.querySelector('.time span:first-child');
+    const durationTime = document.querySelector('.time span:last-child');
 
-        // Add color change on hover for progress bar
-        progressBar.addEventListener('mouseenter', () => {
-            document.querySelector('.progress').style.backgroundColor = '#fff';
-        });
-        progressBar.addEventListener('mouseleave', () => {
-            document.querySelector('.progress').style.backgroundColor = '#fff';
-        });
-    </script>
+    const progressPercentage = (audio.currentTime / audio.duration) * 100 || 0;
+    progressBar.style.width = `${progressPercentage}%`;
+
+    currentTime.textContent = formatTime(audio.currentTime);
+    durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
+  });
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60) || 0;
+    const secs = Math.floor(seconds % 60) || 0;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const volumeSlider = document.querySelector('.volume-slider');
+  volumeSlider.addEventListener('input', (e) => {
+    const value = e.target.value / 100;
+    audio.volume = value;
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updatePlayer();
+    audio.volume = volumeSlider.value / 100;
+  });
+
+  const progressBar = document.querySelector('.progress-bar');
+  progressBar.addEventListener('click', (e) => {
+    const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
+    const clickPercentage = (clickPosition / progressBar.offsetWidth);
+    audio.currentTime = clickPercentage * audio.duration;
+  });
+</script>
 </body>
 </html>
