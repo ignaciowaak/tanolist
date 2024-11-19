@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS Music Player</title>
+    <title>My play list </title>
     <style>
         body, html {
             margin: 0;
@@ -31,11 +31,13 @@
             border-radius: 1rem;
             overflow: hidden;
             margin-bottom: 1rem;
+            transition: all 0.5s ease-in-out;
         }
         .album-art img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: all 0.5s ease-in-out;
         }
         .info {
             color: #fff;
@@ -60,12 +62,14 @@
             background: rgba(255,255,255,0.2);
             border-radius: 2px;
             margin-bottom: 0.5rem;
+            cursor: pointer;
         }
         .progress {
-            width: 55%;
+            width: 0%;
             height: 100%;
             background: #fff;
             border-radius: 2px;
+            transition: width 0.1s linear;
         }
         .time {
             display: flex;
@@ -141,19 +145,19 @@
     <div class="container">
         <div class="player">
             <div class="album-art">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Flowers%20by%20Miley%20Cyrus.jpg-2P7nIRay103GfxmXgbfXrDAkGjOmA7.jpeg" alt="Album cover for Flowers by Miley Cyrus">
+                <img src="fotos/1.jpg" alt="Album cover">
             </div>
             <div class="info">
                 <div class="device">iPhone</div>
-                <div class="song-title">Flowers</div>
-                <div class="artist">Miley Cyrus</div>
+                <div class="song-title">Luxxx</div>
+                <div class="artist">Lit killa ft Tiago pzk</div>
             </div>
             <div class="progress-bar">
                 <div class="progress"></div>
             </div>
             <div class="time">
-                <span>1:48</span>
-                <span>-1:33</span>
+                <span>0:00</span>
+                <span>-0:00</span>
             </div>
             <div class="controls">
                 <button class="control-btn" aria-label="Add to favorites">
@@ -170,8 +174,7 @@
                     </button>
                     <button class="control-btn play-pause" aria-label="Play or pause">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <rect x="6" y="4" width="4" height="16"></rect>
-                            <rect x="14" y="4" width="4" height="16"></rect>
+                            <path d="M5 3L19 12L5 21V3Z"></path>
                         </svg>
                     </button>
                     <button class="control-btn" aria-label="Next track">
@@ -262,7 +265,7 @@
         });
 
         document.querySelector('.control-btn[aria-label="AirPlay"]').addEventListener('click', () => {
-            const pageUrl = window.location.href; // Reemplazar con tu URL real
+            const pageUrl = window.location.href;
             navigator.clipboard.writeText(pageUrl).then(() => {
                 showToast('¡Enlace copiado! Gracias por compartir la página');
             });
@@ -315,6 +318,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             updatePlayer();
             audio.volume = volumeSlider.value / 100;
+        });
+
+        // New code to allow user interaction with the time bar
+        const progressBar = document.querySelector('.progress-bar');
+        progressBar.addEventListener('click', (e) => {
+            const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
+            const clickPercentage = (clickPosition / progressBar.offsetWidth);
+            audio.currentTime = clickPercentage * audio.duration;
         });
     </script>
 </body>
