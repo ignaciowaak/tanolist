@@ -288,19 +288,6 @@
   let currentSongIndex = 0;
   const audio = new Audio();
 
-  const showToast = (message, duration = 3000) => {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.style.display = 'block';
-    toast.style.opacity = '1';
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 300);
-    }, duration);
-  };
-
   const updatePlayer = () => {
     const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
 
@@ -310,49 +297,41 @@
     const albumArtContainer = document.querySelector('.album-art');
     albumArtContainer.innerHTML = ''; // Limpia el contenido actual
 
-    if (type === "image") {
-      const imgElement = document.createElement('img');
-      imgElement.src = image;
-      imgElement.style.width = '100%';
-      imgElement.style.height = '100%';
-      imgElement.style.objectFit = 'cover';
-      albumArtContainer.appendChild(imgElement);
+    const imgElement = document.createElement('img');
+    imgElement.src = image;
+    imgElement.style.width = '100%';
+    imgElement.style.height = '100%';
+    imgElement.style.objectFit = 'cover';
+    imgElement.style.opacity = '1';
+    imgElement.style.transition = 'opacity 2s ease';
+    albumArtContainer.appendChild(imgElement);
 
-      // Mostrar imagen por 5 segundos, luego transicionar al video si existe
-      if (video) {
+    if (type === "video") {
+      setTimeout(() => {
+        const videoElement = document.createElement('video');
+        videoElement.src = video;
+        videoElement.autoplay = true;
+        videoElement.loop = true;
+        videoElement.muted = true;
+        videoElement.style.width = '100%';
+        videoElement.style.height = '100%';
+        videoElement.style.objectFit = 'cover';
+        videoElement.style.opacity = '0';
+        videoElement.style.transition = 'opacity 2s ease';
+
+        albumArtContainer.appendChild(videoElement);
+
+        videoElement.addEventListener('canplaythrough', () => {
+          imgElement.style.opacity = '0.6';
+          videoElement.style.opacity = '1';
+        });
+
         setTimeout(() => {
-          const videoElement = document.createElement('video');
-          videoElement.src = video;
-          videoElement.autoplay = true;
-          videoElement.loop = true;
-          videoElement.muted = true;
-          videoElement.style.width = '100%';
-          videoElement.style.height = '100%';
-          videoElement.style.objectFit = 'cover';
-          videoElement.style.opacity = '0'; // Inicia oculto para transicionar
-          videoElement.style.transition = 'opacity 2s ease';
-
-          albumArtContainer.appendChild(videoElement);
-
-          // Asegurar transición suave una vez cargado el video
-          videoElement.addEventListener('canplaythrough', () => {
-            videoElement.style.opacity = '1';
-          });
-        }, 5000); // 5 segundos de imagen antes de transicionar
-      }
-    } else if (type === "video") {
-      const videoElement = document.createElement('video');
-      videoElement.src = video;
-      videoElement.autoplay = true;
-      videoElement.loop = true;
-      videoElement.muted = true;
-      videoElement.style.width = '100%';
-      videoElement.style.height = '100%';
-      videoElement.style.objectFit = 'cover';
-      albumArtContainer.appendChild(videoElement);
+          imgElement.remove();
+        }, 500); // Asegura que la transición esté completa
+      }, 4000); // Espera 5 segundos antes de cambiar
     }
 
-    // Precarga del audio sin cambiar automáticamente
     audio.src = audioSrc;
     audio.preload = "auto";
     audio.play().catch(error => {
@@ -362,7 +341,9 @@
   };
 
   audio.addEventListener('ended', () => {
-    updatePlayPauseButton(false);
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    updatePlayer();
+    audio.play();
   });
 
   const updatePlayPauseButton = (isPlaying) => {
@@ -373,17 +354,6 @@
       playPauseBtn.innerHTML = '<path d="M5 3L19 12L5 21V3Z"></path>';
     }
   };
-
-  document.querySelector('.control-btn[aria-label="Add to favorites"]').addEventListener('click', () => {
-    showToast('¡Agregado a favoritos!');
-  });
-
-  document.querySelector('.control-btn[aria-label="AirPlay"]').addEventListener('click', () => {
-    const pageUrl = window.location.href;
-    navigator.clipboard.writeText(pageUrl).then(() => {
-      showToast('¡Enlace copiado! Gracias por compartir la página');
-    });
-  });
 
   document.querySelector('.play-pause').addEventListener('click', () => {
     if (audio.paused) {
@@ -405,6 +375,12 @@
     updatePlayer();
   });
 
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60) || 0;
+    const secs = Math.floor(seconds % 60) || 0;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
   audio.addEventListener('timeupdate', () => {
     const progressBar = document.querySelector('.progress');
     const currentTime = document.querySelector('.time span:first-child');
@@ -417,28 +393,15 @@
     durationTime.textContent = `-${formatTime(audio.duration - audio.currentTime)}`;
   });
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60) || 0;
-    const secs = Math.floor(seconds % 60) || 0;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-
-  const volumeSlider = document.querySelector('.volume-slider');
-  volumeSlider.addEventListener('input', (e) => {
-    const value = e.target.value / 100;
-    audio.volume = value;
+  const progressBar = document.querySelector('.progress-bar');
+  progressBar.addEventListener('click', (e) => {
+    const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
+    const clickPercentage = Math.min(Math.max(clickPosition / progressBar.offsetWidth, 0), 1);
+    audio.currentTime = clickPercentage * audio.duration;
   });
 
   document.addEventListener('DOMContentLoaded', () => {
     updatePlayer();
-    audio.volume = volumeSlider.value / 100;
-  });
-
-  const progressBar = document.querySelector('.progress-bar');
-  progressBar.addEventListener('click', (e) => {
-    const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
-    const clickPercentage = (clickPosition / progressBar.offsetWidth);
-    audio.currentTime = clickPercentage * audio.duration;
   });
 </script>
 </body>
