@@ -244,47 +244,47 @@ const songs = [
   {
     title: "Luxxx",
     artist: "Lit killa ft Tiago PZK",
-    image: "place/1.jpg",
-    audio: "can/1.m4a",
-    video: "fotos/1.mp4",
+    image: "place/1.jpg", // Usar imágenes optimizadas
+    audio: "can/1.m4a", // Usar archivos de audio optimizados
+    video: "fotos/1.mp4", // Usar videos optimizados
     type: "video"
   },
   {
     title: "QUE VAS A HACER HOY",
     artist: "Omar Courtz ft De la Ghetto",
-    image: "fotos/2.jpg",
-    audio: "can/2.m4a",
+    image: "fotos/2.jpg", // Usar imágenes optimizadas
+    audio: "can/2.m4a", // Usar archivos de audio optimizados
     type: "image"
   },
   {
     title: "Duele",
     artist: "YSY A",
-    image: "fotos/3.jpg",
-    audio: "can/3.m4a",
+    image: "fotos/3.jpg", // Usar imágenes optimizadas
+    audio: "can/3.m4a", // Usar archivos de audio optimizados
     type: "image"
   },
   {
     title: "Luna",
     artist: "Feid",
-    image: "place/4.jpg",
-    audio: "can/4.m4a",
-    video: "fotos/4.mp4",
+    image: "place/4.jpg", // Usar imágenes optimizadas
+    audio: "can/4.m4a", // Usar archivos de audio optimizados
+    video: "fotos/4.mp4", // Usar videos optimizados
     type: "video"
   },
   {
     title: "Cine",
     artist: "Duki",
-    image: "place/5.jpg",
-    audio: "can/5.m4a",
-    video: "fotos/5.mp4",
+    image: "place/5.jpg", // Usar imágenes optimizadas
+    audio: "can/5.m4a", // Usar archivos de audio optimizados
+    video: "fotos/5.mp4", // Usar videos optimizados
     type: "video"
   },
   {
     title: "El Don",
     artist: "Khea, Lit killa, Asan, bhavi",
-    image: "place/6.jpg",
-    audio: "can/6.m4a",
-    video: "fotos/6.mp4",
+    image: "place/6.jpg", // Usar imágenes optimizadas
+    audio: "can/6.m4a", // Usar archivos de audio optimizados
+    video: "fotos/6.mp4", // Usar videos optimizados
     type: "video"
   }
 ];
@@ -296,13 +296,9 @@ let isWelcomeScreen = true; // Variable para controlar si estamos en la pantalla
 const updatePlayer = () => {
     // Si estamos en la pantalla de bienvenida, mostramos solo el mensaje inicial
     if (isWelcomeScreen) {
-      // Mostrar mensaje de bienvenida
       document.querySelector('.album-art').textContent = "welcome/0.png";
-
       document.querySelector('.song-title').textContent = "Mi Playlist";
       document.querySelector('.artist').textContent = "Ignacio Wack";
-
-      // Mostrar la frase del dispositivo (iPhone o lo que sea)
       document.querySelector('.device').textContent = "iPhone"; // O el nombre que quieras para el dispositivo
 
       const albumArtContainer = document.querySelector('.album-art');
@@ -334,6 +330,7 @@ const updatePlayer = () => {
 
   const imgElement = document.createElement('img');
   imgElement.src = image;
+  imgElement.loading = "lazy"; // Carga diferida de la imagen
   imgElement.style.width = '100%';
   imgElement.style.height = '100%';
   imgElement.style.objectFit = 'cover';
