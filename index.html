@@ -244,93 +244,97 @@ const songs = [
   {
     title: "Luxxx",
     artist: "Lit killa ft Tiago PZK",
-    image: "place/1.jpg", // Usar imágenes optimizadas
-    audio: "can/1.m4a", // Usar archivos de audio optimizados
-    video: "fotos/1.mp4", // Usar videos optimizados
+    image: "place/1.jpg",
+    audio: "can/1.m4a",
+    video: "fotos/1.mp4",
     type: "video"
   },
   {
     title: "QUE VAS A HACER HOY",
     artist: "Omar Courtz ft De la Ghetto",
-    image: "fotos/2.jpg", // Usar imágenes optimizadas
-    audio: "can/2.m4a", // Usar archivos de audio optimizados
+    image: "fotos/2.jpg",
+    audio: "can/2.m4a",
     type: "image"
   },
   {
     title: "Duele",
     artist: "YSY A",
-    image: "fotos/3.jpg", // Usar imágenes optimizadas
-    audio: "can/3.m4a", // Usar archivos de audio optimizados
+    image: "fotos/3.jpg",
+    audio: "can/3.m4a",
     type: "image"
   },
   {
     title: "Luna",
     artist: "Feid",
-    image: "place/4.jpg", // Usar imágenes optimizadas
-    audio: "can/4.m4a", // Usar archivos de audio optimizados
-    video: "fotos/4.mp4", // Usar videos optimizados
+    image: "place/4.jpg",
+    audio: "can/4.m4a",
+    video: "fotos/4.mp4",
     type: "video"
   },
   {
     title: "Cine",
     artist: "Duki",
-    image: "place/5.jpg", // Usar imágenes optimizadas
-    audio: "can/5.m4a", // Usar archivos de audio optimizados
-    video: "fotos/5.mp4", // Usar videos optimizados
+    image: "place/5.jpg",
+    audio: "can/5.m4a",
+    video: "fotos/5.mp4",
     type: "video"
   },
   {
     title: "El Don",
     artist: "Khea, Lit killa, Asan, bhavi",
-    image: "place/6.jpg", // Usar imágenes optimizadas
-    audio: "can/6.m4a", // Usar archivos de audio optimizados
-    video: "fotos/6.mp4", // Usar videos optimizados
+    image: "place/6.jpg",
+    audio: "can/6.m4a",
+    video: "fotos/6.mp4",
     type: "video"
   }
 ];
 
 let currentSongIndex = 0;
 const audio = new Audio();
-let isWelcomeScreen = true; // Variable para controlar si estamos en la pantalla de bienvenida
+let isWelcomeScreen = true;
+
+// Preload audio files
+songs.forEach(song => {
+  const audioElement = new Audio();
+  audioElement.preload = "metadata";
+  audioElement.src = song.audio;
+});
 
 const updatePlayer = () => {
-    // Si estamos en la pantalla de bienvenida, mostramos solo el mensaje inicial
-    if (isWelcomeScreen) {
-      document.querySelector('.album-art').textContent = "welcome/0.png";
-      document.querySelector('.song-title').textContent = "Mi Playlist";
-      document.querySelector('.artist').textContent = "Ignacio Wack";
-      document.querySelector('.device').textContent = "iPhone"; // O el nombre que quieras para el dispositivo
+  if (isWelcomeScreen) {
+    document.querySelector('.album-art').textContent = "welcome/0.png";
+    document.querySelector('.song-title').textContent = "Mi Playlist";
+    document.querySelector('.artist').textContent = "Ignacio Wack";
+    document.querySelector('.device').textContent = "iPhone";
 
-      const albumArtContainer = document.querySelector('.album-art');
-      albumArtContainer.innerHTML = ''; // Limpiar el contenedor
+    const albumArtContainer = document.querySelector('.album-art');
+    albumArtContainer.innerHTML = '';
 
-      const imgElement = document.createElement('img');
-      imgElement.src = "welcome/0.png"; // Imagen de bienvenida
-      imgElement.style.width = '100%';
-      imgElement.style.height = '100%';
-      imgElement.style.objectFit = 'cover';
-      imgElement.style.opacity = '1';
-      imgElement.style.transition = 'opacity 2s ease';
-      albumArtContainer.appendChild(imgElement);
+    const imgElement = document.createElement('img');
+    imgElement.src = "welcome/0.png";
+    imgElement.style.width = '100%';
+    imgElement.style.height = '100%';
+    imgElement.style.objectFit = 'cover';
+    imgElement.style.opacity = '1';
+    imgElement.style.transition = 'opacity 2s ease';
+    albumArtContainer.appendChild(imgElement);
 
-      // Aseguramos que el texto "iPhone" sea visible y no altere el tamaño
-      document.querySelector('.device').style.display = 'block'; // Asegura que "iPhone" sea visible
+    document.querySelector('.device').style.display = 'block';
 
-      return; // Detenemos la ejecución aquí si es la pantalla de bienvenida
-    }
+    return;
+  }
 
-  // Si no estamos en la pantalla de bienvenida, actualizamos el reproductor
   const { title, artist, image, video, audio: audioSrc, type } = songs[currentSongIndex];
 
   document.querySelector('.song-title').textContent = title;
   document.querySelector('.artist').textContent = artist;
 
   const albumArtContainer = document.querySelector('.album-art');
-  albumArtContainer.innerHTML = ''; // Limpiar el contenedor de la carátula
+  albumArtContainer.innerHTML = '';
 
-  const imgElement = document.createElement('img');
+  const imgElement = new Image();
   imgElement.src = image;
-  imgElement.loading = "lazy"; // Carga diferida de la imagen
+  imgElement.loading = "lazy";
   imgElement.style.width = '100%';
   imgElement.style.height = '100%';
   imgElement.style.objectFit = 'cover';
@@ -338,7 +342,6 @@ const updatePlayer = () => {
 
   if (type === "video") {
     setTimeout(() => {
-      // Limpiar cualquier video previo antes de agregar uno nuevo
       const existingVideo = albumArtContainer.querySelector('video');
       if (existingVideo) {
         existingVideo.remove();
@@ -365,17 +368,19 @@ const updatePlayer = () => {
     }, 20000);
   }
 
-  audio.src = audioSrc;
-  audio.preload = "auto"; // Pre-cargar el audio
+  if (audio.src !== audioSrc) {
+    audio.src = audioSrc;
+    audio.preload = "auto";
+  }
+  
   audio.play().catch(error => {
     console.log("Error al reproducir automáticamente:", error);
   });
   updatePlayPauseButton(true);
 };
 
-// Control de volumen
 document.querySelector('.volume-control').addEventListener('input', (e) => {
-  const volume = e.target.value / 100; // Escala de 0 a 1
+  const volume = e.target.value / 100;
   audio.volume = volume;
 });
 
@@ -398,8 +403,8 @@ document.querySelector('.play-pause').addEventListener('click', () => {
   if (audio.paused) {
     audio.play();
     updatePlayPauseButton(true);
-    isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
-    updatePlayer(); // Actualiza el reproductor
+    isWelcomeScreen = false;
+    updatePlayer();
   } else {
     audio.pause();
     updatePlayPauseButton(false);
@@ -408,13 +413,13 @@ document.querySelector('.play-pause').addEventListener('click', () => {
 
 document.querySelector('.control-btn[aria-label="Next track"]').addEventListener('click', () => {
   currentSongIndex = (currentSongIndex + 1) % songs.length;
-  isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
+  isWelcomeScreen = false;
   updatePlayer();
 });
 
 document.querySelector('.control-btn[aria-label="Previous track"]').addEventListener('click', () => {
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-  isWelcomeScreen = false; // Desaparece la pantalla de bienvenida
+  isWelcomeScreen = false;
   updatePlayer();
 });
 
@@ -444,7 +449,7 @@ progressBar.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  updatePlayer(); // Inicializa la pantalla de bienvenida
+  updatePlayer();
 });
 </script>
 </body>
